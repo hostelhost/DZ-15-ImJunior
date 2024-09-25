@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -10,9 +9,13 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float _sleepTime = 1.0f;
     private ObjectPool<Player> _pool;
 
+    private void Awake()
+    {
+        _pool = CreatePool();        
+    }
+
     private void Start()
     {
-        _pool = CreatePool();
         InvokeRepeating(nameof(SpawnPlayer), _sleepTime, _sleepTime);
     }
 
@@ -40,7 +43,7 @@ public class Spawner : MonoBehaviour
 
     private void GetPlayer(Player player)
     {
-        player.gameObject.SetActive(true);
         player.transform.position = transform.position;
+        player.gameObject.SetActive(true);
     }
 }
