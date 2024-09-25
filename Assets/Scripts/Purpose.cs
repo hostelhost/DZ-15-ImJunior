@@ -8,7 +8,7 @@ public class Purpose : MonoBehaviour
 
     private void Start()
     {
-        _target = TakeNewPoint();
+        _target = TakeNextPoint();
     }
 
     private void Update()
@@ -16,10 +16,10 @@ public class Purpose : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, _target.transform.position, _speed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, _target.transform.position) == 0)       
-           _target = TakeNewPoint();        
+           _target = TakeNextPoint();        
     }
 
-    private Point TakeNewPoint()
+    private Point TakeNextPoint()
     {
         return _points.GetRandomPoint();
     }
