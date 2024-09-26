@@ -1,49 +1,67 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private Material _material;
-    [SerializeField] private Player _prefab;
+    [SerializeField] private Enemy _prefab;
     [SerializeField] private Purpose _target;
     [SerializeField] private float _sleepTime = 1.0f;
-    private ObjectPool<Player> _pool;
+    private ObjectPool<Enemy> _pool;
+    private Coroutine _coroutine;
 
     private void Awake()
     {
-        _pool = CreatePool();        
+        _pool = CreatePool();
     }
 
     private void Start()
     {
-        InvokeRepeating(nameof(SpawnPlayer), _sleepTime, _sleepTime);
+        _coroutine = StartCoroutine(Repeating(_sleepTime));
     }
 
-    private void SpawnPlayer()
+    private void OnDisable()
+    {
+        StopCoroutine(_coroutine);
+    }
+
+    private IEnumerator Repeating(float sleepTime)
+    {
+        while (true)
+        {
+            SpawnEnemy();
+
+            yield return new WaitForSeconds(sleepTime);
+        }
+    }
+
+    private void SpawnEnemy()
     {
         _pool.Get();
     }
 
-    private ObjectPool<Player> CreatePool()
+    private ObjectPool<Enemy> CreatePool()
     {
-        return new ObjectPool<Player>(
-            CreatePlayer,
-            GetPlayer,
-        player => { player.gameObject.SetActive(false); },
-        player => { Destroy(player.gameObject); }
+        return new ObjectPool<Enemy>(
+            CreateEnemy,
+            EnemyActivation,
+        enemy => { enemy.gameObject.SetActive(false); },
+        enemy => { Destroy(enemy.gameObject); }
         );
     }
 
-    private Player CreatePlayer()
+    private Enemy CreateEnemy()
     {
-        Player newPlayer = Instantiate<Player>(_prefab);
-        newPlayer.Initialize(_material, _target, _pool.Release);
-        return newPlayer;
+        Enemy newEnemy = Instantiate<Enemy>(_prefab);
+        newEnemy.Initialize(_material, _target, _pool.Release);
+        return newEnemy;
     }
 
-    private void GetPlayer(Player player)
+    private void EnemyActivation(Enemy enemy)
     {
-        player.transform.position = transform.position;
-        player.gameObject.SetActive(true);
+        enemy.transform.position = transform.position;
+        enemy.gameObject.SetActive(true);
     }
 }
