@@ -15,7 +15,7 @@ public class Purpose : MonoBehaviour
     {
         transform.position = Vector3.MoveTowards(transform.position, _target.transform.position, _speed * Time.deltaTime);
 
-        if (Vector3.SqrMagnitude(transform.position - _target.transform.position) == 0)      
+        if (Vector3.SqrMagnitude(transform.position - _target.transform.position) == 0 * 0)      
             _target = TakeNextPoint();       
     }
 
